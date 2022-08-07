@@ -8,12 +8,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Configuration
+@EnableGlobalMethodSecurity(securedEnabled = true, prePostEnabled = true)
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     private MyAccessDeniedHandler accessDenied;
@@ -30,9 +32,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 //必须和表单提交的接口一样，会去执行自定义登录逻辑
                 .loginProcessingUrl("/login")
                 // 登录成功后跳转的页面只支持POST请求
-                //.successForwardUrl("/toMain")
+                .successForwardUrl("/toMain")
                 // 自定义登录处理器
-                .successHandler(new MyAuthenticationSuccessHandler("main.html"))
+                //.successHandler(new MyAuthenticationSuccessHandler("main.html"))
                 // 登录失败
                 //.failureForwardUrl("/toError")
                 // 自定义失败处理器
@@ -61,14 +63,14 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 //.antMatchers("/main1.html").hasAnyAuthority("admin", "adminN")
                 // 根据角色进行权限控制，AuthorityUtils.commaSeparatedStringToAuthorityList("admin,normal, ROLE_abc"));
                 //.antMatchers("/main1.html").hasRole("abc")
-                .antMatchers("/main1.html").access("hasRole('abc')")
+                //.antMatchers("/main1.html").access("hasRole('abc')")
                 //.antMatchers("/main1.html").hasAnyRole("abc", "aa")
                 //基于IP地址进行权限控制
-                .antMatchers("/main1.html").hasIpAddress("127.0.0.1")
+                //.antMatchers("/main1.html").hasIpAddress("127.0.0.1")
                 // 所有的请求都需要授权，必须放在最后面
-                //.anyRequest().authenticated();
+                .anyRequest().authenticated();
                 // 自定以的access方法
-                .anyRequest().access("@myServiceImpl.hasPermission(request, authentication)");
+                //.anyRequest().access("@myServiceImpl.hasPermission(request, authentication)");
         // 异常处理
         http.exceptionHandling()
                 .accessDeniedHandler(accessDenied);
