@@ -3,6 +3,7 @@ package com.xdl.config;
 import com.xdl.handler.MyAccessDeniedHandler;
 import com.xdl.handler.MyAuthenticationFailureHandler;
 import com.xdl.handler.MyAuthenticationSuccessHandler;
+import com.xdl.service.MyServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -16,6 +17,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     private MyAccessDeniedHandler accessDenied;
+    @Autowired
+    private MyServiceImpl myServiceImpl;
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
@@ -63,7 +66,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 //基于IP地址进行权限控制
                 .antMatchers("/main1.html").hasIpAddress("127.0.0.1")
                 // 所有的请求都需要授权，必须放在最后面
-                .anyRequest().authenticated();
+                //.anyRequest().authenticated();
+                // 自定以的access方法
+                .anyRequest().access("@myServiceImpl.hasPermission(request, authentication)");
         // 异常处理
         http.exceptionHandling()
                 .accessDeniedHandler(accessDenied);
